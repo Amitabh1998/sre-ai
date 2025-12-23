@@ -1,0 +1,82 @@
+"use client";
+
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+
+export default function ForgotPasswordPage() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
+
+  const onSubmit = (data: ForgotPasswordFormData) => {
+    console.log("Reset password:", data);
+    // TODO: Implement password reset
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <div className="h-10 w-10 rounded bg-primary flex items-center justify-center">
+              <span className="text-white text-xl">✈</span>
+            </div>
+            <span className="text-2xl font-semibold text-white">SRE.ai</span>
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Reset your password
+          </h1>
+          <p className="text-slate-400">
+            Enter your email address and we&apos;ll send you a link to reset your password.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Work Email
+            </label>
+            <Input
+              type="email"
+              placeholder="name@company.com"
+              icon={
+                <span className="material-symbols-outlined">mail</span>
+              }
+              {...register("email")}
+              error={errors.email?.message}
+            />
+            {errors.email && (
+              <p className="mt-1 text-xs text-severity-p1">{errors.email.message}</p>
+            )}
+          </div>
+
+          <Button type="submit" variant="primary" className="w-full">
+            Send Reset Link
+          </Button>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-slate-400">
+          Remember your password?{" "}
+          <Link href="/login" className="text-primary hover:text-primary/80">
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+
