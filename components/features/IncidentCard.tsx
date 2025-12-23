@@ -63,17 +63,27 @@ export function IncidentCard({ incident }: IncidentCardProps) {
             <span className="text-sm text-success">Auto-healed</span>
           </div>
         );
-      default:
-        // Fallback for old status types
-        const statusVariant =
-          incident.status === "resolved"
-            ? "success"
-            : incident.status === "investigating"
-            ? "severity-p2"
-            : "severity-p1";
+      case "investigating":
+        // Handle old "investigating" status format
         return (
-          <Badge variant={statusVariant as any}>
-            {incident.status.charAt(0).toUpperCase() + incident.status.slice(1)}
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-severity-p2"></div>
+            <span className="text-sm text-white">Investigating</span>
+          </div>
+        );
+      case "active":
+        return (
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-severity-p1"></div>
+            <span className="text-sm text-white">Active</span>
+          </div>
+        );
+      default:
+        // TypeScript exhaustiveness check - this should never happen
+        const _exhaustive: never = incident.status;
+        return (
+          <Badge variant="default">
+            {String(incident.status).charAt(0).toUpperCase() + String(incident.status).slice(1).replace(/-/g, " ")}
           </Badge>
         );
     }
