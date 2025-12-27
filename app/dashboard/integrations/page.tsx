@@ -82,8 +82,10 @@ export default function IntegrationsPage() {
   };
 
   const handleDisconnect = (integration: Integration) => {
-    console.log("Disconnect:", integration.id);
     // TODO: Implement disconnect
+    if (process.env.NODE_ENV === "development") {
+      console.log("Disconnect:", integration.id);
+    }
   };
 
   return (

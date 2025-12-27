@@ -56,9 +56,11 @@ export default function SettingsPage() {
   });
 
   const onSubmitInvite = (data: InviteFormData) => {
-    console.log("Invite:", data);
     setIsInviteModalOpen(false);
     // TODO: Implement invite
+    if (process.env.NODE_ENV === "development") {
+      console.log("Invite:", data);
+    }
   };
 
   return (

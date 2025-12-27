@@ -1,17 +1,8 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { TableCell, TableRow } from "@/components/ui/Table";
-import { formatDistanceToNow } from "date-fns";
-
-export interface Incident {
-  id: string;
-  title: string;
-  service: string;
-  severity: "P1" | "P2" | "P3" | "P4";
-  status: "ai-investigating" | "human-intervention" | "resolved" | "auto-healed" | "active" | "investigating";
-  mttr: string | null;
-  createdAt: string;
-}
+import { formatRelativeTime } from "@/lib/utils/format";
+import type { Incident } from "@/lib/types";
 
 interface IncidentCardProps {
   incident: Incident;
@@ -108,7 +99,7 @@ export function IncidentCard({ incident }: IncidentCardProps) {
         {incident.mttr || "—"}
       </TableCell>
       <TableCell className="text-slate-400">
-        {formatDistanceToNow(new Date(incident.createdAt), { addSuffix: true })}
+        {formatRelativeTime(incident.createdAt)}
       </TableCell>
     </TableRow>
   );

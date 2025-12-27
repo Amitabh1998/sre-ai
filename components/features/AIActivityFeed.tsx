@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { formatDistanceToNow } from "date-fns";
+import { formatRelativeTime } from "@/lib/utils/format";
 
 export interface AIActivity {
   id: string;
@@ -54,11 +54,7 @@ export function AIActivityFeed({ activities }: AIActivityFeedProps) {
                     {activity.title}
                   </h4>
                   <span className="text-xs text-slate-500">
-                    {activity.isLive
-                      ? "Now"
-                      : formatDistanceToNow(new Date(activity.timestamp), {
-                          addSuffix: true,
-                        })}
+                    {activity.isLive ? "Now" : formatRelativeTime(activity.timestamp)}
                   </span>
                 </div>
                 <p className="text-sm text-slate-400 mb-2">

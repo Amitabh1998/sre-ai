@@ -32,13 +32,13 @@ export function Sidebar() {
     .slice(0, 2) || "U";
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r border-slate-700 bg-surface-dark">
-      <div className="flex h-16 items-center px-6 border-b border-slate-700">
+    <div className="flex h-screen w-64 flex-col border-r border-white/10 bg-surface-dark/50 backdrop-blur-sm">
+      <div className="flex h-16 items-center px-6 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded bg-primary flex items-center justify-center">
-            <span className="text-white text-lg">✈</span>
+          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
+            <span className="material-symbols-outlined text-white text-lg">shield</span>
           </div>
-          <span className="text-xl font-semibold text-white">SRE Agent</span>
+          <span className="text-lg font-semibold text-white">ReliOps AI</span>
         </div>
       </div>
       <nav className="flex-1 space-y-1 px-3 py-4">
@@ -49,10 +49,10 @@ export function Sidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                 isActive
-                  ? "bg-primary/20 text-primary"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                  ? "bg-primary/20 text-primary border border-primary/30"
+                  : "text-slate-400 hover:bg-white/5 hover:text-white border border-transparent"
               )}
             >
               <span className="material-symbols-outlined text-xl">
@@ -63,7 +63,7 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="border-t border-slate-700 p-4">
+      <div className="border-t border-white/10 p-4">
         <div className="flex items-center gap-3 mb-3">
           <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
             <span className="text-white text-xs font-semibold">{userInitials}</span>
@@ -82,9 +82,9 @@ export function Sidebar() {
         </div>
         <button
           onClick={handleLogout}
-          className="w-full text-left text-sm text-slate-400 hover:text-white px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors"
+          className="w-full text-left text-sm text-slate-400 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 transition-all duration-200 flex items-center gap-2"
         >
-          <span className="material-symbols-outlined text-lg align-middle mr-2">logout</span>
+          <span className="material-symbols-outlined text-base">logout</span>
           Log out
         </button>
       </div>

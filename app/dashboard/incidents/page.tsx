@@ -1,9 +1,14 @@
+"use client";
+
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
-import { IncidentCard, type Incident } from "@/components/features/IncidentCard";
+import { IncidentCard } from "@/components/features/IncidentCard";
+import { CreateIncidentModal } from "@/components/features/CreateIncidentModal";
+import type { Incident } from "@/lib/types";
 
 const incidents: Incident[] = [
   {
@@ -45,17 +50,26 @@ const incidents: Incident[] = [
 ];
 
 export default function IncidentsPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Incidents</h1>
-          <p className="text-slate-400 mt-1">
+          <p className="text-slate-400 mt-1 text-sm">
             Monitor and manage production incidents
           </p>
         </div>
-        <Button variant="primary">New Incident</Button>
+        <Button size="lg" onClick={() => setIsModalOpen(true)}>
+          New Incident
+        </Button>
       </div>
+
+      <CreateIncidentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
 
       <Card>
         <CardHeader>
@@ -66,19 +80,19 @@ export default function IncidentsPage() {
                 icon={<span className="material-symbols-outlined">search</span>}
               />
             </div>
-            <select className="h-10 rounded-lg bg-surface-dark border border-slate-700 px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+            <select className="h-11 rounded-lg bg-surface-dark border border-slate-700 px-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors hover:border-slate-600">
               <option>All Severities</option>
               <option>P1</option>
               <option>P2</option>
               <option>P3</option>
             </select>
-            <select className="h-10 rounded-lg bg-surface-dark border border-slate-700 px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+            <select className="h-11 rounded-lg bg-surface-dark border border-slate-700 px-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors hover:border-slate-600">
               <option>All Statuses</option>
               <option>Active</option>
               <option>Investigating</option>
               <option>Resolved</option>
             </select>
-            <select className="h-10 rounded-lg bg-surface-dark border border-slate-700 px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+            <select className="h-11 rounded-lg bg-surface-dark border border-slate-700 px-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors hover:border-slate-600">
               <option>All Services</option>
               <option>payment-service</option>
               <option>checkout-api</option>
@@ -123,10 +137,10 @@ export default function IncidentsPage() {
                   Showing {incidents.length} incidents
                 </p>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm" disabled>
+                  <Button variant="secondary" size="md" disabled>
                     Previous
                   </Button>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="secondary" size="md">
                     Next
                   </Button>
                 </div>

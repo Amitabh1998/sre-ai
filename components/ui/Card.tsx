@@ -9,10 +9,10 @@ export function Card({ className, variant = "default", children, ...props }: Car
   return (
     <div
       className={cn(
-        "rounded-lg border border-slate-700 bg-surface-dark",
+        "rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm",
         {
           "p-6": variant === "default" || variant === "metric",
-          "p-4 hover:border-slate-600 transition-colors cursor-pointer":
+          "p-4 hover:border-white/20 hover:bg-white/10 transition-all duration-200 cursor-pointer":
             variant === "integration",
         },
         className

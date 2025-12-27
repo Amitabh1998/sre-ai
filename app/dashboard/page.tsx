@@ -1,9 +1,17 @@
+"use client";
+
+import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
-import { IncidentCard, type Incident } from "@/components/features/IncidentCard";
+import { IncidentCard } from "@/components/features/IncidentCard";
+import type { Incident } from "@/lib/types";
 import { AIActivityFeed, type AIActivity } from "@/components/features/AIActivityFeed";
 import { MetricCard } from "@/components/features/MetricCard";
+import { SkeletonCard, SkeletonTable } from "@/components/ui/Skeleton";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import Link from "next/link";
+import { useAsync } from "@/lib/hooks/useAsync";
+import { incidentsApi } from "@/lib/api/incidents";
 
 const metrics = [
   {
@@ -120,45 +128,70 @@ const aiActivities: AIActivity[] = [
   },
 ];
 
-export default function DashboardPage() {
+function DashboardContent() {
+  const { data: incidentsData, loading, error } = useAsync(() =>
+    incidentsApi.getAll({ pageSize: 5 })
+  );
+
+  // Use mock data if API fails (for frontend-only mode)
+  const incidents = incidentsData?.data || recentIncidents;
+
+  if (error && !incidentsData) {
+    return <ErrorMessage error={error} />;
+  }
+
   return (
     <div className="space-y-6">
+      {/* Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {metrics.map((metric) => (
           <MetricCard key={metric.label} {...metric} />
         ))}
       </div>
 
+      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
               <CardTitle>Recent Incidents</CardTitle>
               <Link
                 href="/dashboard/incidents"
-                className="text-sm text-primary hover:underline"
+                className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
               >
-                View All
+                View All →
               </Link>
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>SEVERITY</TableHead>
-                    <TableHead>INCIDENT</TableHead>
-                    <TableHead>SERVICE</TableHead>
-                    <TableHead>STATUS</TableHead>
-                    <TableHead>MTTR</TableHead>
-                    <TableHead>TIME</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentIncidents.map((incident) => (
-                    <IncidentCard key={incident.id} incident={incident} />
-                  ))}
-                </TableBody>
-              </Table>
+              {loading ? (
+                <SkeletonTable />
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>SEVERITY</TableHead>
+                      <TableHead>INCIDENT</TableHead>
+                      <TableHead>SERVICE</TableHead>
+                      <TableHead>STATUS</TableHead>
+                      <TableHead>MTTR</TableHead>
+                      <TableHead>TIME</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {incidents.length > 0 ? (
+                      incidents.map((incident) => (
+                        <IncidentCard key={incident.id} incident={incident} />
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={6} className="text-center py-8 text-slate-400">
+                          No incidents found
+                        </td>
+                      </tr>
+                    )}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -168,6 +201,24 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="space-y-6 p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
   );
 }
 

@@ -1,19 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address"),
-});
-
-type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import { forgotPasswordSchema, type ForgotPasswordFormData } from "@/lib/validation/schemas";
 
 export default function ForgotPasswordPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const {
     register,
     handleSubmit,
@@ -22,9 +21,19 @@ export default function ForgotPasswordPage() {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = (data: ForgotPasswordFormData) => {
-    console.log("Reset password:", data);
-    // TODO: Implement password reset
+  const onSubmit = async (data: ForgotPasswordFormData) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Mock password reset - in production, this would call an API
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setSuccess(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send reset link. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,29 +54,42 @@ export default function ForgotPasswordPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
-              Work Email
-            </label>
+        {success ? (
+          <div className="rounded-lg border border-success/50 bg-success/10 p-4">
+            <div className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-success">check_circle</span>
+              <div>
+                <p className="text-sm font-medium text-success">Reset link sent</p>
+                <p className="text-sm text-slate-300 mt-1">
+                  Check your email for password reset instructions.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {error && <ErrorMessage error={error} />}
+            
             <Input
               type="email"
+              label="Work Email"
               placeholder="name@company.com"
-              icon={
-                <span className="material-symbols-outlined">mail</span>
-              }
+              icon={<span className="material-symbols-outlined">mail</span>}
               {...register("email")}
               error={errors.email?.message}
             />
-            {errors.email && (
-              <p className="mt-1 text-xs text-severity-p1">{errors.email.message}</p>
-            )}
-          </div>
 
-          <Button type="submit" variant="primary" className="w-full">
-            Send Reset Link
-          </Button>
-        </form>
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-full"
+              disabled={isLoading}
+              loading={isLoading}
+            >
+              Send Reset Link
+            </Button>
+          </form>
+        )}
 
         <p className="mt-6 text-center text-sm text-slate-400">
           Remember your password?{" "}
